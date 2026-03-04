@@ -1,8 +1,6 @@
 # Caesar Cipher CLI - Architecture Showcase
 
-**Author:** Tanatswa D. Muskwe
-**Architecture:** Hexagonal (Ports & Adapters)  
-**License:** MIT
+**Architecture:** Hexagonal (Ports & Adapters)
 
 A command-line tool for encrypting, decrypting, and cracking Caesar cipher messages with frequency analysis.
 
@@ -207,18 +205,6 @@ This is a personal coding style showcase, but suggestions and improvements are w
 3. Make your changes
 4. Run tests to ensure everything works
 5. Submit a pull request
-
-## 📝 License
-
-MIT License - See [LICENSE](LICENSE) for details.
-
-## 👤 Author
-
-**Tanatswa D. Muskwe**
-
-- GitHub: [@blAzinggrEEnONI](https://github.com/blAzinggrEEnONI)
-- Email: tanatswadmu@gmail.com
-- Project: Caesar Cipher CLI - Architecture Showcase
 
 ## 🌟 Acknowledgments
 

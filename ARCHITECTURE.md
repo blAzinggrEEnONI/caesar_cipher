@@ -1,6 +1,5 @@
 # Architecture Documentation
 
-**Author:** Tanatswa D. Muskwe  
 **Project:** Caesar Cipher CLI  
 **Architecture Style:** Hexagonal (Ports & Adapters) with Functional Core
 
@@ -324,6 +323,4 @@ This architecture prioritizes:
 
 ---
 
-**Author:** Tanatswa D. Muskwe  
-**License:** MIT  
 **Last Updated:** March 2026
