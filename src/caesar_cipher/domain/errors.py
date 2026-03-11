@@ -12,13 +12,13 @@ from typing import Any
 class DomainError:
     """
     Base class for all domain errors.
-    
+
     Captures both human-readable message and structured context.
-    
+
     Design Decision:
         Using frozen dataclass ensures errors are immutable and hashable.
         Context dict allows flexible error enrichment as errors propagate.
-    
+
     Examples:
         >>> error = DomainError(
         ...     message="Operation failed",
@@ -30,17 +30,17 @@ class DomainError:
     """
     message: str
     context: dict[str, Any]
-    
+
     def with_context(self, **kwargs: Any) -> 'DomainError':
         """
         Add additional context to error.
-        
+
         Args:
             **kwargs: Additional context key-value pairs
-            
+
         Returns:
             New error instance with merged context
-            
+
         Design Decision:
             Returns new instance to maintain immutability.
             Allows error enrichment as it propagates up the call stack.
@@ -53,12 +53,12 @@ class DomainError:
 class ValidationError(DomainError):
     """
     Error when input validation fails.
-    
+
     Used for:
         - Invalid shift values
         - Empty or malformed input
         - Constraint violations
-    
+
     Examples:
         >>> error = ValidationError(
         ...     message="Shift value out of range",
@@ -72,12 +72,12 @@ class ValidationError(DomainError):
 class CipherError(DomainError):
     """
     Error during cipher operations.
-    
+
     Used for:
         - Encryption failures
         - Decryption failures
         - Invalid cipher state
-    
+
     Examples:
         >>> error = CipherError(
         ...     message="Cannot encrypt empty text",
@@ -91,12 +91,12 @@ class CipherError(DomainError):
 class AnalysisError(DomainError):
     """
     Error during frequency analysis.
-    
+
     Used for:
         - Insufficient text for analysis
         - Invalid frequency data
         - Analysis computation failures
-    
+
     Examples:
         >>> error = AnalysisError(
         ...     message="Cannot analyze empty text",

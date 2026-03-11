@@ -14,32 +14,32 @@ from caesar_cipher.domain.errors import FileIOError
 class FileTextInput:
     """
     Reads text from files.
-    
+
     Implements TextInputPort for file-based input.
-    
+
     Examples:
         >>> input_adapter = FileTextInput(Path("message.txt"))
         >>> result = input_adapter.read_text()
         >>> if result.is_ok():
         ...     text = result.unwrap()
     """
-    
+
     def __init__(self, path: Path):
         """
         Initialize file input adapter.
-        
+
         Args:
             path: Path to file to read
         """
         self._path = path
-    
+
     def read_text(self) -> Result[str, FileIOError]:
         """
-        Read text from file.
-        
+        Read text from the file specified at initialization.
+
         Returns:
             Ok(str) with file contents, or Err(IOError) on failure
-            
+
         Error Cases:
             - File not found
             - Permission denied
@@ -93,41 +93,41 @@ class FileTextInput:
 class FileTextOutput:
     """
     Writes text to files.
-    
+
     Implements TextOutputPort for file-based output.
-    
+
     Examples:
         >>> output_adapter = FileTextOutput(Path("output.txt"))
         >>> result = output_adapter.write_text("Hello, World!")
         >>> if result.is_ok():
         ...     print("Write successful")
     """
-    
+
     def __init__(self, path: Path):
         """
         Initialize file output adapter.
-        
+
         Args:
             path: Path to file to write
         """
         self._path = path
-    
+
     def write_text(self, text: str) -> Result[None, FileIOError]:
         """
         Write text to file.
-        
+
         Args:
             text: Text content to write
-            
+
         Returns:
             Ok(None) on success, or Err(IOError) on failure
-            
+
         Error Cases:
             - Permission denied
             - Disk full
             - Invalid path
             - I/O errors
-            
+
         Design Decision:
             Creates parent directories if they don't exist.
             Overwrites existing files.
@@ -135,7 +135,7 @@ class FileTextOutput:
         try:
             # Create parent directories if needed
             self._path.parent.mkdir(parents=True, exist_ok=True)
-            
+
             # Write file
             self._path.write_text(text, encoding='utf-8')
             return Ok(None)
@@ -163,23 +163,23 @@ class FileTextOutput:
 class StdinTextInput:
     """
     Reads text from standard input.
-    
+
     Implements TextInputPort for stdin-based input.
-    
+
     Examples:
         >>> input_adapter = StdinTextInput()
         >>> result = input_adapter.read_text()
         >>> if result.is_ok():
         ...     text = result.unwrap()
     """
-    
+
     def read_text(self) -> Result[str, FileIOError]:
         """
         Read text from stdin.
-        
+
         Returns:
             Ok(str) with stdin contents, or Err(IOError) on failure
-            
+
         Design Decision:
             Reads all available input until EOF.
             Strips trailing whitespace for convenience.
@@ -202,32 +202,32 @@ class StdinTextInput:
 class ArgumentTextInput:
     """
     Provides text from command-line argument.
-    
+
     Implements TextInputPort for argument-based input.
-    
+
     Examples:
         >>> input_adapter = ArgumentTextInput("HELLO WORLD")
         >>> result = input_adapter.read_text()
         >>> result.unwrap()
         'HELLO WORLD'
     """
-    
+
     def __init__(self, text: str):
         """
         Initialize argument input adapter.
-        
+
         Args:
             text: Text from command-line argument
         """
         self._text = text
-    
+
     def read_text(self) -> Result[str, FileIOError]:
         """
         Return the provided text.
-        
+
         Returns:
             Ok(str) with the text (always succeeds)
-            
+
         Design Decision:
             Always returns Ok since text is already in memory.
             No I/O can fail here.

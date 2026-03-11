@@ -39,14 +39,14 @@ def create_cli_app(
 ) -> typer.Typer:
     """
     Create CLI application with injected dependencies.
-    
+
     Args:
         cipher_service: Domain service for cipher operations
         console: Console output adapter
-        
+
     Returns:
         Configured Typer application
-        
+
     Design Decision:
         Factory function allows dependency injection.
         Makes CLI testable by injecting mock dependencies.
@@ -56,7 +56,7 @@ def create_cli_app(
         help="Caesar cipher encryption, decryption, and brute-force cracking tool",
         no_args_is_help=True,
     )
-    
+
     @app.command()
     def encrypt(
         text: Annotated[
@@ -87,24 +87,24 @@ def create_cli_app(
             console.print_error(f"Invalid key: {key}")
             raise typer.Exit(code=1)
         shift = shift_result.unwrap()
-        
+
         # Read input
         text_result = _resolve_input(text, input_file).read_text()
         if text_result.is_err():
-            console.format_error(text_result.error)
+            console.format_error(text_result.error)  # type: ignore[union-attr]
             raise typer.Exit(code=1)
 
         plaintext = PlainText(text_result.unwrap())
-        
+
         # Encrypt
         ciphertext = cipher_service.encrypt_text(plaintext, shift)
-        
+
         # Write output
         if output_file is not None:
             output_adapter = FileTextOutput(output_file)
             write_result = output_adapter.write_text(ciphertext)
             if write_result.is_err():
-                console.format_error(write_result.error)
+                console.format_error(write_result.error)  # type: ignore[union-attr]
                 raise typer.Exit(code=1)
             if not quiet:
                 console.print_success(f"Encrypted text written to {output_file}")
@@ -113,7 +113,7 @@ def create_cli_app(
                 console.print_success(f"Encrypted: {ciphertext}")
             else:
                 console.print_text(ciphertext)
-    
+
     @app.command()
     def decrypt(
         text: Annotated[
@@ -148,20 +148,20 @@ def create_cli_app(
         # Read input
         text_result = _resolve_input(text, input_file).read_text()
         if text_result.is_err():
-            console.format_error(text_result.error)
+            console.format_error(text_result.error)  # type: ignore[union-attr]
             raise typer.Exit(code=1)
 
         ciphertext = CipherText(text_result.unwrap())
 
         # Decrypt
         plaintext = cipher_service.decrypt_text(ciphertext, shift)
-        
+
         # Write output
         if output_file is not None:
             output_adapter = FileTextOutput(output_file)
             write_result = output_adapter.write_text(plaintext)
             if write_result.is_err():
-                console.format_error(write_result.error)
+                console.format_error(write_result.error)  # type: ignore[union-attr]
                 raise typer.Exit(code=1)
             if not quiet:
                 console.print_success(f"Decrypted text written to {output_file}")
@@ -170,7 +170,7 @@ def create_cli_app(
                 console.print_info(f"Decrypted: {plaintext}")
             else:
                 console.print_text(plaintext)
-    
+
     @app.command()
     def crack(
         text: Annotated[
@@ -194,26 +194,26 @@ def create_cli_app(
         # Read input
         text_result = _resolve_input(text, input_file).read_text()
         if text_result.is_err():
-            console.format_error(text_result.error)
+            console.format_error(text_result.error)  # type: ignore[union-attr]
             raise typer.Exit(code=1)
 
         ciphertext = CipherText(text_result.unwrap())
-        
+
         # Crack cipher
         analyzer = EnglishFrequencyAnalyzer()
         display_count = 26 if show_all else top
-        
+
         crack_result = cipher_service.crack_cipher(
             ciphertext,
             analyzer,
             top_n=display_count
         )
-        
+
         if crack_result.is_err():
-            console.format_error(crack_result.error)
+            console.format_error(crack_result.error)  # type: ignore[union-attr]
             raise typer.Exit(code=1)
-        
+
         results = crack_result.unwrap()
         console.format_crack_results(results)
-    
+
     return app
