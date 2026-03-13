@@ -37,3 +37,6 @@ decrypt TEXT KEY="3":
 
 crack TEXT:
     caesar-cipher crack "{{TEXT}}"
+
+rot13 TEXT:
+    caesar-cipher rot13 "{{TEXT}}"

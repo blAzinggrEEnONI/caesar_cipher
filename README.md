@@ -131,6 +131,16 @@ caesar-cipher crack "KHOOR ZRUOG" --all
 just crack "KHOOR ZRUOG"
 ```
 
+### ROT13
+
+```bash
+# Apply ROT13 (shift 13)
+caesar-cipher rot13 "HELLO WORLD"
+
+# Using Justfile
+just rot13 "HELLO WORLD"
+```
+
 ## 🧪 Testing
 
 ```bash

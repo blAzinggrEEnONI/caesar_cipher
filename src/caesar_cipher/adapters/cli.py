@@ -57,6 +57,27 @@ def create_cli_app(
         no_args_is_help=True,
     )
 
+    @app.callback(invoke_without_command=True)
+    def main(
+        version: Annotated[
+            bool | None,
+            typer.Option(
+                "--version",
+                "-V",
+                help="Show application version and exit.",
+                is_eager=True,
+            ),
+        ] = None,
+    ) -> None:
+        if version:
+            import importlib.metadata
+            try:
+                pkg_version = importlib.metadata.version("caesar-salad-cipher")
+            except importlib.metadata.PackageNotFoundError:
+                pkg_version = "unknown"
+            console.print_info(f"caesar-cipher version {pkg_version}")
+            raise typer.Exit()
+
     @app.command()
     def encrypt(
         text: Annotated[
@@ -215,5 +236,53 @@ def create_cli_app(
 
         results = crack_result.unwrap()
         console.format_crack_results(results)
+
+    @app.command()
+    def rot13(
+        text: Annotated[
+            str | None,
+            typer.Argument(help="Text to ROT13 (or use --input-file or stdin)"),
+        ] = None,
+        input_file: Annotated[
+            Path | None,
+            typer.Option("--input-file", "-i", help="Input file path")
+        ] = None,
+        output_file: Annotated[
+            Path | None,
+            typer.Option("--output-file", "-o", help="Output file path")
+        ] = None,
+        quiet: Annotated[
+            bool,
+            typer.Option("--quiet", "-q", help="Suppress output messages")
+        ] = False,
+    ) -> None:
+        """Apply ROT13 cipher to text (encrypts and decrypts with shift 13)."""
+        shift = Shift(13)
+
+        # Read input
+        text_result = _resolve_input(text, input_file).read_text()
+        if text_result.is_err():
+            console.format_error(text_result.error)  # type: ignore[union-attr]
+            raise typer.Exit(code=1)
+
+        plaintext = PlainText(text_result.unwrap())
+
+        # Transform
+        ciphertext = cipher_service.encrypt_text(plaintext, shift)
+
+        # Write output
+        if output_file is not None:
+            output_adapter = FileTextOutput(output_file)
+            write_result = output_adapter.write_text(ciphertext)
+            if write_result.is_err():
+                console.format_error(write_result.error)  # type: ignore[union-attr]
+                raise typer.Exit(code=1)
+            if not quiet:
+                console.print_success(f"ROT13 text written to {output_file}")
+        else:
+            if not quiet:
+                console.print_success(f"ROT13: {ciphertext}")
+            else:
+                console.print_text(ciphertext)
 
     return app
