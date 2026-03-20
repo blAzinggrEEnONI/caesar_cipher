@@ -141,6 +141,16 @@ caesar-cipher rot13 "HELLO WORLD"
 just rot13 "HELLO WORLD"
 ```
 
+### Analyze
+
+```bash
+# Analyze text frequency relative to English
+caesar-cipher analyze "HELLO OOO WORLD"
+
+# Using Justfile
+just analyze "HELLO OOO WORLD"
+```
+
 ## 🧪 Testing
 
 ```bash

@@ -119,6 +119,36 @@ class ConsoleOutput:
                 f"\n[bold]Best match (Shift {best.shift.value}):[/bold] {best.plaintext}"
             )
 
+    def format_analysis_results(self, text: str, score: float) -> None:
+        """
+        Display language analysis results including a frequency chart.
+        """
+        from collections import Counter
+        
+        letters = [c.upper() for c in text if c.isalpha()]
+        total = len(letters)
+        
+        self.print_info(f"Total alphabetic characters: {total}")
+        self.print_info(f"Chi-squared score: {score:.2f} (lower = more similar to English)\n")
+        
+        if total == 0:
+            return
+            
+        table = Table(title="Letter Frequencies")
+        table.add_column("Letter", style="cyan")
+        table.add_column("Count", style="magenta", justify="right")
+        table.add_column("Frequency", style="yellow", justify="right")
+        table.add_column("Distribution", style="green")
+
+        counts = Counter(letters)
+        for letter in sorted(counts.keys()):
+            count = counts[letter]
+            freq = (count / total) * 100
+            bar = "█" * int(freq)
+            table.add_row(letter, str(count), f"{freq:.1f}%", bar)
+
+        self._console.print(table)
+
     def format_error(self, error: DomainError) -> None:
         """
         Display formatted error with context.

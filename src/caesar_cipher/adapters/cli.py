@@ -285,4 +285,31 @@ def create_cli_app(
             else:
                 console.print_text(ciphertext)
 
+    @app.command()
+    def analyze(
+        text: Annotated[
+            str | None,
+            typer.Argument(help="Text to analyze (or use --input-file or stdin)"),
+        ] = None,
+        input_file: Annotated[
+            Path | None,
+            typer.Option("--input-file", "-i", help="Input file path")
+        ] = None,
+    ) -> None:
+        """Analyze text frequency distribution and English score."""
+        # Read input
+        text_result = _resolve_input(text, input_file).read_text()
+        if text_result.is_err():
+            console.format_error(text_result.error)  # type: ignore[union-attr]
+            raise typer.Exit(code=1)
+
+        content = text_result.unwrap()
+        
+        # Calculate score
+        analyzer = EnglishFrequencyAnalyzer()
+        score = analyzer.analyze(content)
+
+        # Plot distribution
+        console.format_analysis_results(content, score.value)
+
     return app

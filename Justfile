@@ -40,3 +40,6 @@ crack TEXT:
 
 rot13 TEXT:
     caesar-cipher rot13 "{{TEXT}}"
+
+analyze TEXT:
+    caesar-cipher analyze "{{TEXT}}"
